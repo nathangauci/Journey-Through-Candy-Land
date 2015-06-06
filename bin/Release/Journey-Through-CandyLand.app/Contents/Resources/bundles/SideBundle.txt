@@ -1,9 +1,0 @@
-// 32x32 images for files and folders
-// BITMAP,fdFile,fdFile.png
-// BITMAP,fdFolder,fdFolder.png
-
-// Font for text in dialog
-FONT,Font,arial.ttf,12
-
-// The actual panel
-PANEL,SidePanel,SidePanel.txt

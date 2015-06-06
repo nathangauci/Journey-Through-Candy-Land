@@ -361,7 +361,7 @@ begin
 	begin
 		game.player.name:= EndReadingText();
 		ProcessEvents();
-		HidePanel('SidePanel');
+		HidePanel('MenuPanel');
 		SetupPlayer(game.player);
 		game.gameStarted:= TRUE;
 		SetupAllCandy(game);
@@ -376,7 +376,7 @@ the user name is boxes, after the player lifts their finger allows the text to b
 begin
 	ClearScreen(ColorWhite);
 	DrawHeader(game.head);
-	ShowPanel('SidePanel');
+	ShowPanel('MenuPanel');
 	game.gameStarted:=FALSE;
 	GUISetBackgroundColor(ColorWhite);
 	GUISetForegroundColor(ColorBlack);
@@ -404,8 +404,8 @@ begin
 end;
 
 procedure LoadGame(var game: GameData);
-{opens the window and loads the header bitmap and font for writing text, then loads the 'side bar' which is the menu,
-then calls the draw header procedure, sets the difficulty to easy, and for each highscore gives it the value 0}
+{sets the icon for windows,opens the window and loads the header bitmap and font for writing text, then loads the 'side bar'
+which is the menu,then calls the draw header procedure, sets the difficulty to easy, and for each highscore gives it the value 0}
 var
 	i: Integer;
 begin
@@ -416,7 +416,7 @@ begin
 	AssignFile(game.scoreFile, PathToResource('./highscores.jtc'));
 	game.head:= LoadBitmap('header.png');
 	game.font:= LoadFont('arial.ttf', FONT_SIZE);
-	LoadResourceBundle('SideBundle.txt');
+	LoadResourceBundle('MenuBundle.txt');
 	game.difficulty:= EASY;
 
 	Reset(game.scoreFile); 
