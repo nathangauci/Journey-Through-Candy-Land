@@ -186,7 +186,7 @@ begin
 end;
 
 procedure SetupPlayer(var player: PlayerData);
-{Procedure sets the player at the right edge of the screen to give them sometime to understand the controls
+{Procedure sets the player at the right edge of the screen to give them some time to understand the controls
  They start out with 0 score and a randomly generated amount of health, between 2 and 4}
 begin
 	player.bmp		:= LoadBitmap('player.png');
@@ -197,7 +197,7 @@ end;
 
 procedure SetupCandy(var candy: CandyData; var game: GameData);
 {gives the candy the picture, a random value between 5 and 20, a random location between
-the screen width and 1000 pixels off the side. Gives the candy's dx to the game speed}
+the screen width and 10,000 pixels off the side. Gives the candy's dx to the game speed}
 begin
 	candy.bmp 	:= LoadBitmap('candy.png');
 	candy.value := Rnd(15)+5;
@@ -212,7 +212,7 @@ var
 	i: Integer;
 begin
 	SetLength(game.candy, NO_OF_CANDY);
-	for i:=0 to High(game.candy) do
+	for i := 0 to High(game.candy) do
 	begin
 		SetupCandy(game.candy[i], game);
 	end;
@@ -220,7 +220,8 @@ end;
 
 procedure UpdateEnemies(var game: GameData);
 {Checks for each enemy to see if it is hit, if so subtracts one from the health and sets up the enemy again
-then moves the enemy and redraws the enemy at the new location, then checks if the enemy is off the screen and if it is Resets the enemy}
+then moves the enemy and redraws the enemy at the new location, then checks if the enemy is off the screen
+(accounting for the leeway the player gets) and if it is resets the enemy}
 var
 	i: Integer;
 begin
@@ -263,7 +264,7 @@ begin
 
 		game.candy[i].x -= game.candy[i].dx;
 
-		if game.candy[i].x < -LEEWAY then
+		if game.candy[i].x < 0 then
 		begin
 			SetupCandy(game.candy[i], game);
 		end;	
@@ -271,20 +272,21 @@ begin
 end;
 
 procedure UpdatePlayer(var game: GameData);
-{Procedure updates the player, and shows the score at the top left of the screen,
-Also moves the player back if they don't hold down the correct arrow
-Tests if the floor is there and stops from going below that.
-Also tests if the user goes more than 100 pixels off the screen and kills them if they are}
+{Procedure updates the player, and shows the score, name and health at the top left of the screen,
+Also moves the player back a bit slower than the game speed to allow them to move forward
+stops from going below the floor
+then tests if the user goes more than the leeway amount off the screen and kills them if they are}
 begin
 	if game.player.y<(ScreenHeight()-(BitmapHeight(game.player.bmp)+BitmapHeight(game.head)))  then
 	begin
 		game.player.y +=(game.speed/GRAVITY_DIVISOR);
 	end;
 					// Less than - NOT less than or equal
-	if game.player.x<-(BitmapWidth(game.player.bmp)+LEEWAY) then
+	if game.player.x < -(BitmapWidth(game.player.bmp)+LEEWAY) then
 	begin
 		game.player.health:=0;
 	end;
+
 	DrawText('User Name: ' + game.player.name + ' Score: ' + IntToStr(game.player.score)
 	+ ' Health: ' + IntToStr(game.player.health), ColorBlack, game.font, 0, BitmapHeight(game.head) + 5);
 
@@ -328,11 +330,12 @@ end;
 procedure StartGame(var game: GameData);
 {Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
 also draws the header and the text relating to the difficulty kind then refreshes the screen
-also checks if the player presses ctrl and C goes through each score and sets the score to 0 
-Checks if the player has clicked the button and if so sets up the game and all the arrays}
+also checks if the player presses ctrl and C goes through each score and clears the array 
+Checks if the player has clicked the button and if so sets up the game and all the arrays
+Then if it checks the button and if its pressed stops reading the text and saves it to the variable
+then sets up various things}
 var
 	i: Integer;
-
 begin
 	UpdateInterface();
 	ProcessEvents();
@@ -408,7 +411,7 @@ var
 begin
 	SetIcon(PathToResource('SwinGame.ico'));
 	OpenGraphicsWindow('Journey through Candy Land', 800, 600);
-	// ShowSwinGameSplashScreen();
+	ShowSwinGameSplashScreen();
 
 	AssignFile(game.scoreFile, PathToResource('./highscores.jtc'));
 	game.head:= LoadBitmap('header.png');
@@ -421,7 +424,7 @@ begin
 	begin
 		game.scores[i].value:= ReadIntegerF(game.scoreFile);						// Sets the value at i to the matching line in the hsfile
 		game.scores[i].difficulty:= DifficultyKind(ReadIntegerF(game.scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
-		game.scores[i].name := ReadStringF(game.scoreFile); 
+		game.scores[i].name := ReadStringF(game.scoreFile); 						// same as first
 	end;
 	close(game.scoreFile);
 	PrintHighScoreList(game);
