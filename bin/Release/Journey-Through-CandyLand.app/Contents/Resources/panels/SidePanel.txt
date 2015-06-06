@@ -1,0 +1,39 @@
+// Panel Version: 1
+
+// Panel data:
+x: 0
+y: 0
+w: 800
+h: 600
+d: false // Draggble?
+//can change to false and the background appears but the list outline disapears
+v: false
+b: background.png
+a: background.png
+i: background.png
+
+// Region data
+// Format: r: x, y, w, h, kind
+r: 350, 270, 70, 30, Button, StartButton
+r: 420, 270, 123, 30, Button, DifficultyButton
+r: 700, 500, 100, 70, Button, ClearHSButton
+r: 702, 530, 98, 70, Label, ClearHSLabel, Font, c, Clear Scores
+r: 355, 275, 65, 30, Label, StartButtonLabel, Font, c, Start!
+r: 422, 275, 120, 30, Label, DifficultyButtonLabel, Font, c, Change Difficulty
+
+// Lists are loaded as a region with the following format:
+// r: x, y, w, h, List, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollBmp
+// x, y, w, h = area of region
+// List       = the identifier for lists
+// listId     = the list's name
+// columns    = the columns in the list
+// rows       = the rows in the list
+//              Note: The area for the list items is calculated from the region's area the rows/cols and scrollSize
+// ActiveItem = the item active at start (-1 for none)
+// fontId     = the name of the font to use for this list's items
+// alignment  = The list font alignment
+// scrollSize = the size (width and height) of the scroll bar
+// scrollKind = v for vertical or h for horizontal
+// scrollBmp  = n for no bitmap, or the bitmap name
+
+r: 10, 40, 180, 520, List, NumbersList, 1, 10, -1, Font, c, 10, v, n

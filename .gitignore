@@ -9,4 +9,4 @@ src/oldfiles/
 out.log
 
 #programs
-bin/
+bin/Debug
