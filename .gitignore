@@ -1,0 +1,12 @@
+#compiled stuff
+*.ppu
+*.o
+
+# old files
+src/oldfiles/
+
+#logfile
+out.log
+
+#programs
+bin/
