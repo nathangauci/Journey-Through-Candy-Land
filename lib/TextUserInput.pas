@@ -25,11 +25,10 @@ var
 	line: String;
 begin
 	line:= ReadStringF(tFile);
-
 	try
 		TryStrToInt(line, result);
 	except
-		WriteLn('Test');
+		//
 	end;
 end;
 end.

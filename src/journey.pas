@@ -7,6 +7,7 @@
 ///****************************************************///
 
 program journey;
+{$APPTYPE GUI}
 uses
 	SwinGame, sgTypes, sysUtils, typInfo, TextUserInput;
 const
@@ -409,7 +410,7 @@ which is the menu,then calls the draw header procedure, sets the difficulty to e
 var
 	i: Integer;
 begin
-	SetIcon(PathToResource('SwinGame.ico'));
+	SetIcon(PathToResource('WinIcon.png'));
 	OpenGraphicsWindow('Journey through Candy Land', 800, 600);
 	ShowSwinGameSplashScreen();
 
@@ -448,7 +449,6 @@ begin
 			DrawHeader(game.head);
 			UpdateCandy(game);
 			UpdateEnemies(game);
-			DrawFramerate(0,0);
 			RefreshScreen(60);
 		end;
 	until WindowCloseRequested() OR KeyTyped(vk_ESCAPE);
