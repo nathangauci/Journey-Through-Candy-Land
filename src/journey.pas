@@ -7,6 +7,7 @@
 ///****************************************************///
 
 program journey;
+// Stops Msys from coming up 
 {$APPTYPE GUI}
 uses
 	SwinGame, sgTypes, sysUtils, typInfo, TextUserInput;
@@ -78,14 +79,17 @@ var
 begin
 	ListClearItems('NumbersList');
 	Rewrite(game.scoreFile);
+	
 	for i:=0 to High(game.scores) do
 	begin
 		ListAddItem('NumbersList', IntToStr(i+1) + ': ' + game.scores[i].name + ' '  +
 		IntToStr(game.scores[i].value) + ' (' + EnumToStr(game.scores[i].difficulty) + ')');
+
 		WriteLn(game.scoreFile, game.scores[i].value);						// Writes the value to the file
 		WriteLn(game.scoreFile, Integer(game.scores[i].difficulty));		// Writes the difficulty to the file as an integer
 		WriteLn(game.scoreFile, game.scores[i].name);						// Writes the users name to the file
 	end;
+
 	close(game.scoreFile);	
 end;
 
@@ -122,6 +126,7 @@ begin
 		
 		ListSort(game.scores);
 	end;
+
 	PrintHighScoreList(game);
 end;
 
@@ -167,6 +172,7 @@ begin
 	begin
 		enemy.bmp:= LoadBitmap('enemy_large.png');
 	end;
+
 	enemy.x		:= Rnd(5000)+ScreenWidth();
 					// Random of the screen height -twice the header and enemies height,
 					// then adds one height of the header to get it in the middle
@@ -180,6 +186,7 @@ var
 	i: Integer;
 begin
 	SetLength(game.enemies, NO_OF_ENEMIES);
+
 	for i:=0 to High(game.enemies) do
 	begin
 		SetupEnemy(game.enemies[i], game);
@@ -213,6 +220,7 @@ var
 	i: Integer;
 begin
 	SetLength(game.candy, NO_OF_CANDY);
+
 	for i := 0 to High(game.candy) do
 	begin
 		SetupCandy(game.candy[i], game);
@@ -299,6 +307,7 @@ procedure HandleUserInput(var game: GameData);
 {allows the player to go up or right, but only if they are within the screen top and bottom}
 begin
 	ProcessEvents();
+
 	if (KeyDown(vk_UP)) AND (game.player.y > BitmapHeight(game.head)) then
 	begin
 		game.player.y -= game.speed;
@@ -324,19 +333,64 @@ begin
 			dKind:=succ(dKind);
 		end;
 	end;
+
 	ClearScreen(ColorWhite); // These make sure the text doesn't overwrite itself
 	DrawInterface();		 //	and the text for the buttons doesnt screw up
 end;
 
-procedure StartGame(var game: GameData);
-{Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
-also draws the header and the text relating to the difficulty kind then refreshes the screen
-also checks if the player presses ctrl and C goes through each score and clears the array 
-Checks if the player has clicked the button and if so sets up the game and all the arrays
-Then if it checks the button and if its pressed stops reading the text and saves it to the variable
-then sets up various things}
+procedure ClearHSList(var game: GameData);
+{ goes through each score and clears the array then prints array}
 var
 	i: Integer;
+begin
+	for i:=0 to High(game.scores) do
+	begin
+		game.scores[i].value 		:= 0;
+		game.scores[i].difficulty 	:= DifficultyKind(0);
+		game.scores[i].name 		:= '';
+	end;
+
+	PrintHighScoreList(game);	
+end;
+
+procedure StartGame(var game: GameData);
+{sets the various variables and then starts the game}
+begin
+	game.player.name:= EndReadingText();
+	ProcessEvents();
+	HidePanel('MenuPanel');
+	SetupPlayer(game.player);
+	game.gameStarted:= TRUE;
+	SetupAllCandy(game);
+	SetupAllEnemies(game);
+end;
+
+procedure ShowAboutScreen();
+{Shows the about screen then waits for ctrl and q to be pressed then returns to the menu}
+var
+	aboutBmp: Bitmap;
+begin
+	aboutBmp := LoadBitmap('about.png');
+	DrawBitmap(aboutBmp, 0, 0);
+	RefreshScreen(60);
+	while TRUE do
+	begin
+		ProcessEvents();
+
+		if ((KeyDown(vk_LCTRL)) AND (KeyDown(vk_Q)) )then
+		begin
+			break;
+		end;
+
+		Delay(50);
+	end;
+end;
+
+procedure Menu(var game: GameData);
+{Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
+also draws the header and the text relating to the difficulty kind then refreshes the screen
+also checks if the player presses ctrl and C runs the clear highscores procedure, then checks if the start
+button is clicked and if so starts game}
 begin
 	UpdateInterface();
 	ProcessEvents();
@@ -346,27 +400,20 @@ begin
 	DrawText('Current Difficulty: ' + EnumToStr(game.difficulty), ColorWhite, game.font, 300, 320);
 	RefreshScreen(60);
 	
+	if ButtonClicked('AboutButton') then
+	begin
+		ShowAboutScreen();
+	end;
+
 	if (((KeyDown(vk_LCTRL) OR KeyDown(vk_RCTRL)) AND (KeyDown(vk_C))))
 	OR (ButtonClicked('ClearHSButton')) then
 	begin
-		for i:=0 to High(game.scores) do
-		begin
-			game.scores[i].value 		:= 0;
-			game.scores[i].difficulty 	:= DifficultyKind(0);
-			game.scores[i].name 		:= '';
-		end;
-		PrintHighScoreList(game);
+		ClearHSList(game);
 	end;
 	
 	if (ButtonClicked('StartButton') OR KeyTyped(vk_RETURN))then
 	begin
-		game.player.name:= EndReadingText();
-		ProcessEvents();
-		HidePanel('MenuPanel');
-		SetupPlayer(game.player);
-		game.gameStarted:= TRUE;
-		SetupAllCandy(game);
-		SetupAllEnemies(game);
+		StartGame(game);
 	end;
 end;
 
@@ -381,13 +428,14 @@ begin
 	game.gameStarted:=FALSE;
 	GUISetBackgroundColor(ColorWhite);
 	GUISetForegroundColor(ColorBlack);
-
 	DrawInterface(); // Needed to go to the menu before the player releases button
 	RefreshScreen(60);
+
 	while ((KeyDown(vk_RIGHT)) OR (KeyDown(vk_UP))) do
 	begin
 		Delay(100); 
 	end;
+
 	StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);	
 end;
 
@@ -427,6 +475,7 @@ begin
 		game.scores[i].difficulty:= DifficultyKind(ReadIntegerF(game.scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
 		game.scores[i].name := ReadStringF(game.scoreFile); 						// same as first
 	end;
+
 	close(game.scoreFile);
 	PrintHighScoreList(game);
 end;
@@ -438,11 +487,10 @@ begin
 	LoadGame(game);
 	SetupGame(game);
 	repeat
-		StartGame(game);
+		Menu(game);
 		while ((game.gameStarted) AND NOT ((WindowCloseRequested()) OR (KeyTyped(vk_ESCAPE)))) do
 		begin
 			ClearScreen(ColorWhite);
-
 			HandleUserInput(game);
 			UpdatePlayer(game);
 			KillPlayer(game);
