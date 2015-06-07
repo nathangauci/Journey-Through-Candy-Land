@@ -329,6 +329,30 @@ begin
 	DrawInterface();		 //	and the text for the buttons doesnt screw up
 end;
 
+procedure ClearHSList(var game: GameData);
+var
+	i: Integer;
+begin
+	for i:=0 to High(game.scores) do
+	begin
+		game.scores[i].value 		:= 0;
+		game.scores[i].difficulty 	:= DifficultyKind(0);
+		game.scores[i].name 		:= '';
+	end;
+	PrintHighScoreList(game);	
+end;
+
+procedure StartGame(var game: GameData);
+begin
+	game.player.name:= EndReadingText();
+	ProcessEvents();
+	HidePanel('MenuPanel');
+	SetupPlayer(game.player);
+	game.gameStarted:= TRUE;
+	SetupAllCandy(game);
+	SetupAllEnemies(game);
+end;
+
 procedure Menu(var game: GameData);
 {Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
 also draws the header and the text relating to the difficulty kind then refreshes the screen
@@ -336,8 +360,6 @@ also checks if the player presses ctrl and C goes through each score and clears 
 Checks if the player has clicked the button and if so sets up the game and all the arrays
 Then if it checks the button and if its pressed stops reading the text and saves it to the variable
 then sets up various things}
-var
-	i: Integer;
 begin
 	UpdateInterface();
 	ProcessEvents();
@@ -347,27 +369,20 @@ begin
 	DrawText('Current Difficulty: ' + EnumToStr(game.difficulty), ColorWhite, game.font, 300, 320);
 	RefreshScreen(60);
 	
+	if ButtonClicked('AboutButton') then
+	begin
+		HidePanel('MenuPanel');
+	end;
+
 	if (((KeyDown(vk_LCTRL) OR KeyDown(vk_RCTRL)) AND (KeyDown(vk_C))))
 	OR (ButtonClicked('ClearHSButton')) then
 	begin
-		for i:=0 to High(game.scores) do
-		begin
-			game.scores[i].value 		:= 0;
-			game.scores[i].difficulty 	:= DifficultyKind(0);
-			game.scores[i].name 		:= '';
-		end;
-		PrintHighScoreList(game);
+		ClearHSList(game);
 	end;
 	
 	if (ButtonClicked('StartButton') OR KeyTyped(vk_RETURN))then
 	begin
-		game.player.name:= EndReadingText();
-		ProcessEvents();
-		HidePanel('MenuPanel');
-		SetupPlayer(game.player);
-		game.gameStarted:= TRUE;
-		SetupAllCandy(game);
-		SetupAllEnemies(game);
+		StartGame(game);
 	end;
 end;
 
@@ -443,7 +458,6 @@ begin
 		while ((game.gameStarted) AND NOT ((WindowCloseRequested()) OR (KeyTyped(vk_ESCAPE)))) do
 		begin
 			ClearScreen(ColorWhite);
-
 			HandleUserInput(game);
 			UpdatePlayer(game);
 			KillPlayer(game);
