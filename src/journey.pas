@@ -461,14 +461,13 @@ begin
 	SetIcon(PathToResource('WinIcon.png'));
 	OpenGraphicsWindow('Journey through Candy Land', 800, 600);
 	ShowSwinGameSplashScreen();
-
 	AssignFile(game.scoreFile, PathToResource('./highscores.jtc'));
 	game.head:= LoadBitmap('header.png');
 	game.font:= LoadFont('arial.ttf', FONT_SIZE);
 	LoadResourceBundle('MenuBundle.txt');
 	game.difficulty:= EASY;
-
 	Reset(game.scoreFile); 
+
 	for i:=0 to High(game.scores) do
 	begin
 		game.scores[i].value:= ReadIntegerF(game.scoreFile);						// Sets the value at i to the matching line in the hsfile

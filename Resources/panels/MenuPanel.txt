@@ -23,7 +23,7 @@ r: 700, 500, 100, 70, Button, ClearHSButton
 r: 702, 530, 98, 70, Label, ClearHSLabel, Font, c, Clear Scores
 
 r: 190, 500, 100, 70, Button, AboutButton
-r: 190, 530, 100, 70, Label, AboutButtonLabel, Font, c, About
+r: 195, 530, 95, 70, Label, AboutButtonLabel, Font, c, About
 
 // Lists are loaded as a region with the following format:
 // r: x, y, w, h, List, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollBmp
