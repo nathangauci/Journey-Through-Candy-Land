@@ -10,3 +10,6 @@ out.log
 
 #programs
 bin/Debug
+
+# Temp files
+tmp/Debug/
