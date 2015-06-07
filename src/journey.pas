@@ -365,58 +365,6 @@ begin
 	SetupAllEnemies(game);
 end;
 
-procedure ShowAboutScreen();
-{Shows the about screen then waits for ctrl and q to be pressed then returns to the menu}
-var
-	aboutBmp: Bitmap;
-begin
-	aboutBmp := LoadBitmap('about.png');
-	DrawBitmap(aboutBmp, 0, 0);
-	RefreshScreen(60);
-	while TRUE do
-	begin
-		ProcessEvents();
-
-		if ((KeyDown(vk_LCTRL)) AND (KeyDown(vk_Q)) )then
-		begin
-			break;
-		end;
-
-		Delay(50);
-	end;
-end;
-
-procedure Menu(var game: GameData);
-{Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
-also draws the header and the text relating to the difficulty kind then refreshes the screen
-also checks if the player presses ctrl and C runs the clear highscores procedure, then checks if the start
-button is clicked and if so starts game}
-begin
-	UpdateInterface();
-	ProcessEvents();
-	ChangeDifficulty(game.difficulty);
-	ChangeVariables(game);
-	DrawHeader(game.head);
-	DrawText('Current Difficulty: ' + EnumToStr(game.difficulty), ColorWhite, game.font, 300, 320);
-	RefreshScreen(60);
-	
-	if ButtonClicked('AboutButton') then
-	begin
-		ShowAboutScreen();
-	end;
-
-	if (((KeyDown(vk_LCTRL) OR KeyDown(vk_RCTRL)) AND (KeyDown(vk_C))))
-	OR (ButtonClicked('ClearHSButton')) then
-	begin
-		ClearHSList(game);
-	end;
-	
-	if (ButtonClicked('StartButton') OR KeyTyped(vk_RETURN))then
-	begin
-		StartGame(game);
-	end;
-end;
-
 procedure SetupGame(var game: GameData);
 {Procedure clears the screen and draws the main menu, then refreshes the screen
 Delays while the player still has their finger on up or right, because if not 
@@ -437,6 +385,58 @@ begin
 	end;
 
 	StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);	
+end;
+
+procedure ShowAboutScreen(var game: GameData);
+{Shows the about screen then waits for ctrl and q to be pressed then returns to the menu}
+var
+	aboutBmp: Bitmap;
+begin
+	aboutBmp := LoadBitmap('about.png');
+	DrawBitmap(aboutBmp, 0, 0);
+	EndReadingText();
+	RefreshScreen(60);
+	while NOT ((WindowCloseRequested()) OR (KeyTyped(vk_ESCAPE))) do
+	begin
+		ProcessEvents();
+		
+		if ((KeyDown(vk_LCTRL)) AND (KeyDown(vk_Q)))then
+		begin
+			StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);
+			break;
+		end;
+	end;
+end;
+
+procedure Menu(var game: GameData);
+{Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
+also draws the header and the text relating to the difficulty kind then refreshes the screen
+also checks if the player presses ctrl and C runs the clear highscores procedure, then checks if the start
+button is clicked and if so starts game}
+begin
+	UpdateInterface();
+	ProcessEvents();
+	ChangeDifficulty(game.difficulty);
+	ChangeVariables(game);
+	DrawHeader(game.head);
+	DrawText('Current Difficulty: ' + EnumToStr(game.difficulty), ColorWhite, game.font, 300, 320);
+	RefreshScreen(60);
+	
+	if ButtonClicked('AboutButton') then
+	begin
+		ShowAboutScreen(game);
+	end;
+
+	if (((KeyDown(vk_LCTRL) OR KeyDown(vk_RCTRL)) AND (KeyDown(vk_C))))
+	OR (ButtonClicked('ClearHSButton')) then
+	begin
+		ClearHSList(game);
+	end;
+	
+	if (ButtonClicked('StartButton') OR KeyTyped(vk_RETURN))then
+	begin
+		StartGame(game);
+	end;
 end;
 
 procedure KillPlayer(var game: GameData);
