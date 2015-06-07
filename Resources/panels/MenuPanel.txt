@@ -6,7 +6,6 @@ y: 0
 w: 800
 h: 600
 d: false // Draggble?
-//can change to false and the background appears but the list outline disapears
 v: false
 b: background.png
 a: background.png
@@ -17,6 +16,8 @@ i: background.png
 r: 350, 270, 70, 30, Button, StartButton
 r: 420, 270, 123, 30, Button, DifficultyButton
 r: 700, 500, 100, 70, Button, ClearHSButton
+r: 700, 20, 100, 70, Button, AboutButton
+r: 700, 50, 100, 70, Label, AboutButtonLabel, Font, c, About
 r: 702, 530, 98, 70, Label, ClearHSLabel, Font, c, Clear Scores
 r: 355, 275, 65, 30, Label, StartButtonLabel, Font, c, Start!
 r: 422, 275, 120, 30, Label, DifficultyButtonLabel, Font, c, Change Difficulty

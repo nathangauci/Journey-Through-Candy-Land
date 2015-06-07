@@ -7,6 +7,7 @@
 ///****************************************************///
 
 program journey;
+// Stops Msys from coming up 
 {$APPTYPE GUI}
 uses
 	SwinGame, sgTypes, sysUtils, typInfo, TextUserInput;
@@ -328,7 +329,7 @@ begin
 	DrawInterface();		 //	and the text for the buttons doesnt screw up
 end;
 
-procedure StartGame(var game: GameData);
+procedure Menu(var game: GameData);
 {Procedure runs while the player hasn't pressed the button yet, checks if they have changed the difficulty,
 also draws the header and the text relating to the difficulty kind then refreshes the screen
 also checks if the player presses ctrl and C goes through each score and clears the array 
@@ -438,7 +439,7 @@ begin
 	LoadGame(game);
 	SetupGame(game);
 	repeat
-		StartGame(game);
+		Menu(game);
 		while ((game.gameStarted) AND NOT ((WindowCloseRequested()) OR (KeyTyped(vk_ESCAPE)))) do
 		begin
 			ClearScreen(ColorWhite);
