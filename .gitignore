@@ -10,5 +10,9 @@ out.log
 
 #programs
 bin/Debug
+
 bin/Release
 *.a
+
+# Temp files
+tmp/Debug/
