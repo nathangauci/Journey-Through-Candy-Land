@@ -71,6 +71,12 @@ begin
 	result := GetEnumName(TypeInfo(DifficultyKind), Integer(dKind));
 end;
 
+procedure ReadUsername(const game: GameData);
+{Because the text reading is done in 2 places, the number only has to change here :)}
+begin
+	StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);
+end;
+
 procedure PrintHighScoreList(var game: GameData);
 { Clears the number list, opens the text file in override mode, then for each high score adds them to the list
 and writes their value to the file, then closes the file}
@@ -152,7 +158,7 @@ begin
 	end;
 end;
 
-procedure DrawHeader(var header: Bitmap);
+procedure DrawHeader(const header: Bitmap);
 {Draws the bitmap for the header}
 begin
 	DrawBitmap(header, 0, 0);
@@ -270,7 +276,6 @@ begin
 		end;
 
 		DrawBitmap(game.candy[i].bmp, game.candy[i].x, game.candy[i].y);
-
 		game.candy[i].x -= game.candy[i].dx;
 
 		if game.candy[i].x < 0 then
@@ -383,8 +388,8 @@ begin
 	begin
 		Delay(100); 
 	end;
-
-	StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);	
+	ReadUsername(game);
+	// StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);	
 end;
 
 procedure ShowAboutScreen(var game: GameData);
@@ -402,7 +407,8 @@ begin
 		
 		if ((KeyDown(vk_LCTRL)) AND (KeyDown(vk_Q)))then
 		begin
-			StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);
+			ReadUsername(game);
+			// StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);
 			break;
 		end;
 	end;
@@ -452,11 +458,24 @@ begin
 	end;
 end;
 
+procedure PopulateHSList(var game: GameData);
+var
+	i: Integer;
+begin
+	for i:=0 to High(game.scores) do
+	begin
+		game.scores[i].value:= ReadIntegerF(game.scoreFile);						// Sets the value at i to the matching line in the hsfile
+		game.scores[i].difficulty:= DifficultyKind(ReadIntegerF(game.scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
+		game.scores[i].name := ReadStringF(game.scoreFile); 						// same as first
+	end;
+
+	close(game.scoreFile);
+	PrintHighScoreList(game);	
+end;
+
 procedure LoadGame(var game: GameData);
 {sets the icon for windows,opens the window and loads the header bitmap and font for writing text, then loads the 'side bar'
 which is the menu,then calls the draw header procedure, sets the difficulty to easy, and for each highscore gives it the value 0}
-var
-	i: Integer;
 begin
 	SetIcon(PathToResource('WinIcon.png'));
 	OpenGraphicsWindow('Journey through Candy Land', 800, 600);
@@ -467,16 +486,7 @@ begin
 	LoadResourceBundle('MenuBundle.txt');
 	game.difficulty:= EASY;
 	Reset(game.scoreFile); 
-
-	for i:=0 to High(game.scores) do
-	begin
-		game.scores[i].value:= ReadIntegerF(game.scoreFile);						// Sets the value at i to the matching line in the hsfile
-		game.scores[i].difficulty:= DifficultyKind(ReadIntegerF(game.scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
-		game.scores[i].name := ReadStringF(game.scoreFile); 						// same as first
-	end;
-
-	close(game.scoreFile);
-	PrintHighScoreList(game);
+	PopulateHSList(game);
 end;
 
 procedure Main();
