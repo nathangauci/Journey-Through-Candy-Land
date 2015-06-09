@@ -165,7 +165,7 @@ begin
 	DrawBitmap(header, 0, ScreenHeight()-BitmapHeight(header));
 end;
 
-procedure SetupEnemy(var enemy: EnemyData; var game: GameData);
+procedure SetupEnemy(var enemy: EnemyData; const game: GameData);
 {if a random number between 0 and 2 is greater than or equal to the Integer value associated with the games difficulty
 loads a smaller version, which allows the game to set the difficulty (a lower difficulty will have a greater percentage
 of smaller images) then sets the start value to be randomly off the screen and makes it move at the speed of the game}
@@ -209,7 +209,7 @@ begin
 	player.score	:= 0;
 end;
 
-procedure SetupCandy(var candy: CandyData; var game: GameData);
+procedure SetupCandy(var candy: CandyData; const game: GameData);
 {gives the candy the picture, a random value between 5 and 20, a random location between
 the screen width and 10,000 pixels off the side. Gives the candy's dx to the game speed}
 begin
@@ -389,7 +389,6 @@ begin
 		Delay(100); 
 	end;
 	ReadUsername(game);
-	// StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);	
 end;
 
 procedure ShowAboutScreen(var game: GameData);
@@ -408,7 +407,6 @@ begin
 		if ((KeyDown(vk_LCTRL)) AND (KeyDown(vk_Q)))then
 		begin
 			ReadUsername(game);
-			// StartReadingTextWithText(game.player.name, ColorWhite, AMT_OF_CHARS, game.font, 432, 232);
 			break;
 		end;
 	end;
