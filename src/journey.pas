@@ -111,9 +111,9 @@ After that calls the procedure that prints the list of highscores}
 	begin
 		for i:= High(ListArray) downto Low(ListArray) do
 		begin
-			for j:= Low(ListArray) to i -1 do
+			for j:= Low(ListArray) to (i - 1) do
 			begin
-				if (ListArray[j].value < ListArray [j+1].value) then
+				if (ListArray[j].value < ListArray[j+1].value) then
 				begin
 					temp 			:= ListArray[j];
 					ListArray[j]	:= ListArray[j+1];
@@ -216,7 +216,7 @@ begin
 	candy.bmp 	:= LoadBitmap('candy.png');
 	candy.value := Rnd(15)+5;
 	candy.x 	:= Rnd(10000)+ScreenWidth();
-	candy.y 	:= Rnd(ScreenHeight()-(BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
+	candy.y 	:= Rnd(ScreenHeight() - (BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
 	candy.dx 	:= game.speed;
 end;
 
@@ -271,7 +271,7 @@ begin
 		if BitmapCollision(game.player.bmp, Round(game.player.x), Round(game.player.y),
 		   				  game.candy[i].bmp, Round(game.candy[i].x), Round(game.candy[i].y)) then
 		begin
-			game.player.score+=game.candy[i].value;
+			game.player.score += game.candy[i].value;
 			SetupCandy(game.candy[i], game);
 		end;
 
@@ -291,7 +291,7 @@ Also moves the player back a bit slower than the game speed to allow them to mov
 stops from going below the floor
 then tests if the user goes more than the leeway amount off the screen and kills them if they are}
 begin
-	if game.player.y < (ScreenHeight()-(BitmapHeight(game.player.bmp)+BitmapHeight(game.head)))  then
+	if game.player.y < (ScreenHeight() - (BitmapHeight(game.player.bmp) + BitmapHeight(game.head)))  then
 	begin
 		game.player.y += (game.speed/GRAVITY_DIVISOR);
 	end;
@@ -319,7 +319,7 @@ begin
 	end;
 	if KeyDown(vk_RIGHT) then
 	begin
-		game.player.x+= game.speed;
+		game.player.x += game.speed;
 	end;
 end;
 
@@ -361,11 +361,11 @@ end;
 procedure StartGame(var game: GameData);
 {sets the various variables and then starts the game}
 begin
-	game.player.name:= EndReadingText();
+	game.player.name := EndReadingText();
 	ProcessEvents();
 	HidePanel('MenuPanel');
 	SetupPlayer(game.player);
-	game.gameStarted:= TRUE;
+	game.gameStarted := TRUE;
 	SetupAllCandy(game);
 	SetupAllEnemies(game);
 end;
@@ -378,7 +378,7 @@ begin
 	ClearScreen(ColorWhite);
 	DrawHeader(game.head);
 	ShowPanel('MenuPanel');
-	game.gameStarted:=FALSE;
+	game.gameStarted := FALSE;
 	GUISetBackgroundColor(ColorWhite);
 	GUISetForegroundColor(ColorBlack);
 	DrawInterface(); // Needed to go to the menu before the player releases button
