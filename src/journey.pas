@@ -99,7 +99,7 @@ begin
 	close(game.scoreFile);	
 end;
 
-procedure AddToHighScore(var game: GameData; toAdd: Integer);
+procedure AddToHighScore(var game: GameData; const toAdd: Integer);
 {Checks if the score to add is greater than the last number in the array and
 if so overwrites the last number with the latest score, then calls the procedure to sort the list.
 After that calls the procedure that prints the list of highscores}
@@ -259,7 +259,7 @@ begin
 	end;	
 end;
 
-procedure UpdateCandy(var game: GameData);
+procedure UpdateCandies(var game: GameData);
 { Checks if the candy and the player collide and if so adds however much the score is worth for that
 candy,then for each amount of candy moves them forward as fast as the dx. And if the candy goes off the
 screen wraps around to a random x location off the screen.}
@@ -291,14 +291,14 @@ Also moves the player back a bit slower than the game speed to allow them to mov
 stops from going below the floor
 then tests if the user goes more than the leeway amount off the screen and kills them if they are}
 begin
-	if game.player.y<(ScreenHeight()-(BitmapHeight(game.player.bmp)+BitmapHeight(game.head)))  then
+	if game.player.y < (ScreenHeight()-(BitmapHeight(game.player.bmp)+BitmapHeight(game.head)))  then
 	begin
-		game.player.y +=(game.speed/GRAVITY_DIVISOR);
+		game.player.y += (game.speed/GRAVITY_DIVISOR);
 	end;
 					// Less than - NOT less than or equal
 	if game.player.x < -(BitmapWidth(game.player.bmp)+LEEWAY) then
 	begin
-		game.player.health:=0;
+		game.player.health := 0;
 	end;
 
 	DrawText('User Name: ' + game.player.name + ' Score: ' + IntToStr(game.player.score)
@@ -502,7 +502,7 @@ begin
 			UpdatePlayer(game);
 			KillPlayer(game);
 			DrawHeader(game.head);
-			UpdateCandy(game);
+			UpdateCandies(game);
 			UpdateEnemies(game);
 			RefreshScreen(60);
 		end;
