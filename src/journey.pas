@@ -447,13 +447,10 @@ procedure KillPlayer(var game: GameData);
 {when the players health is <= 0 (if they die twice at once) sets up the game
 again, sets the length of the arrays to 0 to get rid of all the candy and enemies}
 begin
-	if game.player.health <= 0 then
-	begin
-		AddToHighScore(game, game.player.score);
-		SetupGame(game);
-		SetLength(game.candy, 0);
-		SetLength(game.enemies, 0);
-	end;
+	AddToHighScore(game, game.player.score);
+	SetupGame(game);
+	SetLength(game.candy, 0);
+	SetLength(game.enemies, 0);
 end;
 
 procedure PopulateHSList(var game: GameData);
@@ -500,7 +497,10 @@ begin
 			ClearScreen(ColorWhite);
 			HandleUserInput(game);
 			UpdatePlayer(game);
-			KillPlayer(game);
+			if game.player.health <= 0 then
+			begin
+				KillPlayer(game);
+			end;
 			DrawHeader(game.head);
 			UpdateCandies(game);
 			UpdateEnemies(game);
