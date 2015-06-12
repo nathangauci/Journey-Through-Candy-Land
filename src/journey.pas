@@ -398,7 +398,7 @@ var
 begin
 	aboutBmp := LoadBitmap('about.png');
 	DrawBitmap(aboutBmp, 0, 0);
-	game.player.name:= EndReadingText();
+	game.player.name := EndReadingText();
 	RefreshScreen(60);
 	while NOT ((WindowCloseRequested()) OR (KeyTyped(vk_ESCAPE))) do
 	begin
