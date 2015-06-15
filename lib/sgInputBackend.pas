@@ -265,7 +265,7 @@ implementation
         case kyChar of
           //Skip non printable characters
           0..31: ;
-          127..High(Byte): ;
+          127..High(Longint): ;
           else //Append the character
             _tempString := _tempString + Char(kyChar);
         end;

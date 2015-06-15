@@ -17,3 +17,5 @@ bin/Release
 # Temp files
 tmp/Debug/
 *.a
+
+*.a
