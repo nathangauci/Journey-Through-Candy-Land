@@ -93,7 +93,7 @@ begin
 
 		WriteLn(game.scoreFile, game.scores[i].value);						// Writes the value to the file
 		WriteLn(game.scoreFile, Integer(game.scores[i].difficulty));		// Writes the difficulty to the file as an integer
-		WriteLn(game.scoreFile, game.scores[i].name);						// Writes the users name to the file
+		WriteLn(game.scoreFile, game.scores[i].name);						// Writes the users name to the file			
 	end;
 
 	close(game.scoreFile);	
@@ -372,8 +372,7 @@ end;
 
 procedure SetupGame(var game: GameData);
 {Procedure clears the screen and draws the main menu, then refreshes the screen
-Delays while the player still has their finger on up or right, because if not 
-the user name is boxes, after the player lifts their finger allows the text to be read}
+then allows the text to be read}
 begin
 	ClearScreen(ColorWhite);
 	DrawHeader(game.head);
@@ -381,13 +380,7 @@ begin
 	game.gameStarted := FALSE;
 	GUISetBackgroundColor(ColorWhite);
 	GUISetForegroundColor(ColorBlack);
-	DrawInterface(); // Needed to go to the menu before the player releases button
 	RefreshScreen(60);
-
-	while ((KeyDown(vk_RIGHT)) OR (KeyDown(vk_UP))) do
-	begin
-		Delay(100); 
-	end;
 	ReadUsername(game);
 end;
 
@@ -479,7 +472,7 @@ begin
 	game.head:= LoadBitmap('header.png');
 	game.font:= LoadFont('arial.ttf', FONT_SIZE);
 	LoadResourceBundle('MenuBundle.txt');
-	game.difficulty:= EASY;
+	game.difficulty:= DifficultyKind(0);
 	Reset(game.scoreFile); 
 	PopulateHSList(game);
 end;
