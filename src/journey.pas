@@ -7,7 +7,9 @@
 ///****************************************************///
 
 program journey;
-// Stops Msys from coming up 
+// Stops Msys from coming up, NOTE: if any other errors occur then on mac this
+// will be shown as a warning this is because it is not needed but simply ignored
+
 {$APPTYPE GUI}
 uses
 	SwinGame, sgTypes, sysUtils, typInfo, TextUserInput;
@@ -201,7 +203,7 @@ end;
 
 procedure SetupPlayer(var player: PlayerData);
 {Procedure sets the player at the right edge of the screen to give them some time to understand the controls
- They start out with 0 score and a randomly generated amount of health, between 2 and 4}
+ They start out with 0 score}
 begin
 	player.bmp		:= LoadBitmap('player.png');
 	player.x		:= ScreenWidth()-1; 
@@ -261,8 +263,8 @@ end;
 
 procedure UpdateCandies(var game: GameData);
 { Checks if the candy and the player collide and if so adds however much the score is worth for that
-candy,then for each amount of candy moves them forward as fast as the dx. And if the candy goes off the
-screen wraps around to a random x location off the screen.}
+candy and re setup-s it,then for each amount of candy moves them forward as fast as the dx. And if the
+candy goes off the screen wraps around to a random x location off the screen.}
 var
 	i: Integer;
 begin
@@ -325,7 +327,7 @@ end;
 
 procedure ChangeDifficulty(var dKind: DifficultyKind);
 {Checks if the button is pressed and if so increments the difficulty up one level, 
-checks if the difficulty is the max it can be and if so changes to easy and exits}
+checks if the difficulty is the max it can be and if so changes to the min and exits}
 begin
 	if ButtonClicked('DifficultyButton') then
 	begin
@@ -462,8 +464,8 @@ begin
 end;
 
 procedure LoadGame(var game: GameData);
-{sets the icon for windows,opens the window and loads the header bitmap and font for writing text, then loads the 'side bar'
-which is the menu,then calls the draw header procedure, sets the difficulty to easy, and for each highscore gives it the value 0}
+{sets the icon for windows, opens the window and loads the header bitmap and font for writing text, then loads the 'MenuBar'
+which is the menu screen ,then calls the draw header procedure, sets the difficulty to easy, and for each highscore gives it the value 0}
 begin
 	SetIcon(PathToResource('WinIcon.png'));
 	OpenGraphicsWindow('Journey through Candy Land', 800, 600);
