@@ -18,8 +18,9 @@ rm -rf "${APP_PATH}/tmp"
 mkdir "${APP_PATH}/tmp"
 echo " * Cleaned tmp folder"
 
-rm -rf "${APP_PATH}/bin"
-mkdir "${APP_PATH}/bin"
-echo " * Cleaned bin folder"
+rm -rf "${APP_PATH}/bin/Debug"
+echo " * Cleaned debug builds"
+rm -rf "${APP_PATH}/bin/Release"
+echo " * Cleaned release builds"
 
 echo "--------------------------------------------------"
