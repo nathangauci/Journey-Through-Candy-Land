@@ -282,7 +282,12 @@ doMacPackage()
 
     RESOURCE_DIR="${GAMEAPP_PATH}/Contents/Resources"
 }
-
+doZip()
+{   
+    echo "  ... Creating zip file at " ${FULL_APP_PATH}"/Mac.zip"
+    cd /${FULL_APP_PATH}/${OUT_DIR}
+    zip -r ../Mac.zip ./${GAME_NAME}.app > ${LOG_FILE}
+}
 doLinuxCompile()
 {
     mkdir -p ${TMP_DIR}
@@ -437,6 +442,7 @@ then
         
         doBasicMacCompile
         doMacPackage
+        
     elif [ "$OS" = "$LIN" ]; then
         doLinuxCompile
         doLinuxPackage
@@ -446,6 +452,9 @@ then
     fi
     
     doCopyResources
+    if [ "$OS" = "$MAC" ]; then
+        doZip
+    fi
 else
     CleanTmp
     rm -rf "${OUT_DIR}"
