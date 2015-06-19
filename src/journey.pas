@@ -91,7 +91,7 @@ begin
 	for i:=0 to High(game.scores) do
 	begin
 		ListAddItem('NumbersList', IntToStr(i+1) + ': ' + game.scores[i].name + ' '  +
-		IntToStr(game.scores[i].value) + ' (' + EnumToStr(game.scores[i].difficulty) + ')');
+					IntToStr(game.scores[i].value) + ' (' + EnumToStr(game.scores[i].difficulty) + ')');
 
 		WriteLn(game.scoreFile, game.scores[i].value);						// Writes the value to the file
 		WriteLn(game.scoreFile, Integer(game.scores[i].difficulty));		// Writes the difficulty to the file as an integer
@@ -141,23 +141,26 @@ end;
 procedure ChangeVariables(var game: GameData);
 { checks what the difficulty is and changes the variables accordingly}
 begin
-	case game.difficulty of
-		easy:
-		begin
-			game.speed:=10;
-			game.player.health:= 5;
+	with game do
+	begin
+		case difficulty of
+			easy:
+			begin
+				speed:=10;
+				player.health:= 5;
+			end;
+			hard:
+			begin
+				speed:=20;
+				player.health:= 3;
+			end;
+			Impossible:
+			begin
+				speed:=25;
+				player.health:= 2;
+			end;
 		end;
-		hard:
-		begin
-			game.speed:=20;
-			game.player.health:= 3;
-		end;
-		Impossible:
-		begin
-			game.speed:=25;
-			game.player.health:= 2;
-		end;
-	end;
+	end;	
 end;
 
 procedure DrawHeader(const header: Bitmap);
@@ -188,6 +191,34 @@ begin
 	enemy.dx	:= game.speed;
 end;
 
+procedure SetupPlayer(var player: PlayerData);
+{Procedure sets the player at the right edge of the screen to give them some time to understand the controls
+ They start out with 0 score}
+begin
+	with player do
+	begin
+		bmp		:= LoadBitmap('player.png');
+		x		:= ScreenWidth()-1; 
+		y		:= ScreenHeight()/2;
+		score	:= 0;	
+	end;
+
+end;
+
+procedure SetupCandy(var candy: CandyData; const game: GameData);
+{gives the candy the picture, a random value between 5 and 20, a random location between
+the screen width and 10,000 pixels off the side. Gives the candy's dx to the game speed}
+begin
+	with candy do
+	begin
+		bmp 	:= LoadBitmap('candy.png');
+		value := Rnd(15)+5;
+		x 	:= Rnd(10000)+ScreenWidth();
+		y 	:= Rnd(ScreenHeight() - (BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
+		dx 	:= game.speed;
+	end;
+end;
+
 procedure SetupAllEnemies(var game: GameData);
 {loops through the enemy array and sets them up}
 var
@@ -199,27 +230,6 @@ begin
 	begin
 		SetupEnemy(game.enemies[i], game);
 	end;
-end;
-
-procedure SetupPlayer(var player: PlayerData);
-{Procedure sets the player at the right edge of the screen to give them some time to understand the controls
- They start out with 0 score}
-begin
-	player.bmp		:= LoadBitmap('player.png');
-	player.x		:= ScreenWidth()-1; 
-	player.y		:= ScreenHeight()/2;
-	player.score	:= 0;
-end;
-
-procedure SetupCandy(var candy: CandyData; const game: GameData);
-{gives the candy the picture, a random value between 5 and 20, a random location between
-the screen width and 10,000 pixels off the side. Gives the candy's dx to the game speed}
-begin
-	candy.bmp 	:= LoadBitmap('candy.png');
-	candy.value := Rnd(15)+5;
-	candy.x 	:= Rnd(10000)+ScreenWidth();
-	candy.y 	:= Rnd(ScreenHeight() - (BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
-	candy.dx 	:= game.speed;
 end;
 
 procedure SetupAllCandy(var game:GameData);
