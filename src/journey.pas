@@ -85,20 +85,24 @@ and writes their value to the file, then closes the file}
 var
 	i: Integer;
 begin
-	ListClearItems('NumbersList');
-	Rewrite(game.scoreFile);
-	
-	for i:=0 to High(game.scores) do
+	with game do
 	begin
-		ListAddItem('NumbersList', IntToStr(i+1) + ': ' + game.scores[i].name + ' '  +
-					IntToStr(game.scores[i].value) + ' (' + EnumToStr(game.scores[i].difficulty) + ')');
+		ListClearItems('NumbersList');
+		Rewrite(scoreFile);
+		
+		for i:=0 to High(scores) do
+		begin
+			with scores[i] do
+			begin
+				ListAddItem('NumbersList', IntToStr(i+1) + ': ' + name + ' '  + IntToStr(value) + ' (' + EnumToStr(difficulty) + ')');
+				WriteLn(scoreFile, value);						// Writes the value to the file
+				WriteLn(scoreFile, Integer(difficulty));		// Writes the difficulty to the file as an integer
+				WriteLn(scoreFile, name);						// Writes the users name to the file
+			end;			
+		end;
 
-		WriteLn(game.scoreFile, game.scores[i].value);						// Writes the value to the file
-		WriteLn(game.scoreFile, Integer(game.scores[i].difficulty));		// Writes the difficulty to the file as an integer
-		WriteLn(game.scoreFile, game.scores[i].name);						// Writes the users name to the file			
+		close(scoreFile);	
 	end;
-
-	close(game.scoreFile);	
 end;
 
 procedure AddToHighScore(var game: GameData; const toAdd: Integer);
@@ -126,16 +130,18 @@ After that calls the procedure that prints the list of highscores}
 	end;
 
 begin
-	if toAdd > game.scores[High(game.scores)].value then
+	with game do
 	begin
-		game.scores[High(game.scores)].value 		:= toAdd;
-		game.scores[High(game.scores)].difficulty 	:= game.difficulty;
-		game.scores[High(game.scores)].name 		:= game.player.name;
-		
-		ListSort(game.scores);
-	end;
+		if toAdd > scores[High(scores)].value then
+		begin
+			scores[High(scores)].value 		:= toAdd;
+			scores[High(scores)].difficulty := difficulty;
+			scores[High(scores)].name 		:= player.name;
+			ListSort(scores);
+		end;
 
-	PrintHighScoreList(game);
+		PrintHighScoreList(game);
+	end;
 end;
 
 procedure ChangeVariables(var game: GameData);
@@ -175,20 +181,23 @@ procedure SetupEnemy(var enemy: EnemyData; const game: GameData);
 loads a smaller version, which allows the game to set the difficulty (a lower difficulty will have a greater percentage
 of smaller images) then sets the start value to be randomly off the screen and makes it move at the speed of the game}
 begin
-	if Rnd(3) >= Integer(game.difficulty) then  	
+	with enemy do
 	begin
-		enemy.bmp:= LoadBitmap('enemy_small.png');
-	end
-	else 
-	begin
-		enemy.bmp:= LoadBitmap('enemy_large.png');
-	end;
+		if Rnd(3) >= Integer(game.difficulty) then  	
+		begin
+			bmp:= LoadBitmap('enemy_small.png');
+		end
+		else 
+		begin
+			bmp:= LoadBitmap('enemy_large.png');
+		end;
 
-	enemy.x		:= Rnd(5000)+ScreenWidth();
-					// Random of the screen height -twice the header and enemies height,
-					// then adds one height of the header to get it in the middle
-	enemy.y		:= BitmapHeight(game.head) + Rnd(ScreenHeight()-((BitmapHeight(game.head) * 2) + BitmapHeight(enemy.bmp)));
-	enemy.dx	:= game.speed;
+		x	:= Rnd(5000)+ScreenWidth();
+							// Random of the screen height -twice the header and enemies height,
+							// then adds one height of the header to get it in the middle
+		y	:= BitmapHeight(game.head) + Rnd(ScreenHeight()-((BitmapHeight(game.head) * 2) + BitmapHeight(enemy.bmp)));
+		dx	:= game.speed;
+	end;
 end;
 
 procedure SetupPlayer(var player: PlayerData);
@@ -212,10 +221,10 @@ begin
 	with candy do
 	begin
 		bmp 	:= LoadBitmap('candy.png');
-		value := Rnd(15)+5;
-		x 	:= Rnd(10000)+ScreenWidth();
-		y 	:= Rnd(ScreenHeight() - (BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
-		dx 	:= game.speed;
+		value 	:= Rnd(15)+5;
+		x 		:= Rnd(10000)+ScreenWidth();
+		y 		:= Rnd(ScreenHeight() - (BitmapHeight(candy.bmp)+BitmapHeight(game.head)));
+		dx 		:= game.speed;
 	end;
 end;
 
@@ -252,22 +261,25 @@ then moves the enemy and redraws the enemy at the new location, then checks if t
 var
 	i: Integer;
 begin
-	for i:=Low(game.enemies) to High(game.enemies) do
+	with game do
 	begin
-		if BitmapCollision(game.player.bmp, Round(game.player.x), Round(game.player.y),
-						   game.enemies[i].bmp, Round(game.enemies[i].x), Round(game.enemies[i].y)) then
+		for i:=Low(enemies) to High(enemies) do
 		begin
-			game.player.health-=1;
-			SetupEnemy(game.enemies[i], game);
+			if BitmapCollision(player.bmp, Round(player.x), Round(player.y),
+							   enemies[i].bmp, Round(enemies[i].x), Round(enemies[i].y)) then
+			begin
+				player.health-=1;
+				SetupEnemy(enemies[i], game);
+			end;
+			
+			enemies[i].x -= enemies[i].dx;
+			DrawBitmap(enemies[i].bmp, enemies[i].x, enemies[i].y);
+			
+			if enemies[i].x < -LEEWAY then
+			begin
+				SetupEnemy(enemies[i], game);
+			end;	
 		end;
-		
-		game.enemies[i].x -= game.enemies[i].dx;
-		DrawBitmap(game.enemies[i].bmp, game.enemies[i].x, game.enemies[i].y);
-		
-		if game.enemies[i].x < -LEEWAY then
-		begin
-			SetupEnemy(game.enemies[i], game);
-		end;	
 	end;	
 end;
 
@@ -278,23 +290,26 @@ candy goes off the screen wraps around to a random x location off the screen.}
 var
 	i: Integer;
 begin
-	for i:=Low(game.candy) to High(game.candy) do
+	with game do
 	begin
-		if BitmapCollision(game.player.bmp, Round(game.player.x), Round(game.player.y),
-		   				  game.candy[i].bmp, Round(game.candy[i].x), Round(game.candy[i].y)) then
+		for i:=Low(candy) to High(candy) do
 		begin
-			game.player.score += game.candy[i].value;
-			SetupCandy(game.candy[i], game);
-		end;
+			if BitmapCollision(player.bmp, Round(player.x), Round(player.y),
+			   				  candy[i].bmp, Round(candy[i].x), Round(candy[i].y)) then
+			begin
+				player.score += candy[i].value;
+				SetupCandy(candy[i], game);
+			end;
 
-		DrawBitmap(game.candy[i].bmp, game.candy[i].x, game.candy[i].y);
-		game.candy[i].x -= game.candy[i].dx;
+			DrawBitmap(candy[i].bmp, candy[i].x, candy[i].y);
+			candy[i].x -= candy[i].dx;
 
-		if game.candy[i].x < 0 then
-		begin
-			SetupCandy(game.candy[i], game);
+			if candy[i].x < 0 then
+			begin
+				SetupCandy(candy[i], game);
+			end;	
 		end;	
-	end;	
+	end;
 end;
 
 procedure UpdatePlayer(var game: GameData);
@@ -303,36 +318,42 @@ Also moves the player back a bit slower than the game speed to allow them to mov
 stops from going below the floor
 then tests if the user goes more than the leeway amount off the screen and kills them if they are}
 begin
-	if game.player.y < (ScreenHeight() - (BitmapHeight(game.player.bmp) + BitmapHeight(game.head)))  then
+	with game do
 	begin
-		game.player.y += (game.speed/GRAVITY_DIVISOR);
-	end;
-					// Less than - NOT less than or equal
-	if game.player.x < -(BitmapWidth(game.player.bmp)+LEEWAY) then
-	begin
-		game.player.health := 0;
-	end;
+		if player.y < (ScreenHeight() - (BitmapHeight(player.bmp) + BitmapHeight(head)))  then
+		begin
+			player.y += (game.speed/GRAVITY_DIVISOR);
+		end;
+						// Less than - NOT less than or equal
+		if player.x < -(BitmapWidth(player.bmp)+LEEWAY) then
+		begin
+			player.health := 0;
+		end;
 
-	DrawText('User Name: ' + game.player.name + ' Score: ' + IntToStr(game.player.score)
-	+ ' Health: ' + IntToStr(game.player.health), ColorBlack, game.font, 0, BitmapHeight(game.head) + 5);
+		DrawText('User Name: ' + player.name + ' Score: ' + IntToStr(player.score)
+		+ ' Health: ' + IntToStr(player.health), ColorBlack, font, 0, BitmapHeight(head) + 5);
 
-	game.player.x -= (game.speed/FALL_BACK_DIVISOR);
-	DrawBitmap(game.player.bmp, game.player.x, game.player.y);
+		player.x -= (game.speed/FALL_BACK_DIVISOR);
+		DrawBitmap(player.bmp, player.x, player.y);
+	end;
 end;
 
 procedure HandleUserInput(var game: GameData);
 {allows the player to go up or right, but only if they are within the screen top and bottom}
 begin
 	ProcessEvents();
-
-	if (KeyDown(vk_UP)) AND (game.player.y > BitmapHeight(game.head)) then
+	with game do
 	begin
-		game.player.y -= game.speed;
+		if (KeyDown(vk_UP)) AND (player.y > BitmapHeight(head)) then
+		begin
+			player.y -= game.speed;
+		end;
+		if KeyDown(vk_RIGHT) then
+		begin
+			player.x += game.speed;
+		end;
 	end;
-	if KeyDown(vk_RIGHT) then
-	begin
-		game.player.x += game.speed;
-	end;
+	
 end;
 
 procedure ChangeDifficulty(var dKind: DifficultyKind);
@@ -362,9 +383,12 @@ var
 begin
 	for i:=0 to High(game.scores) do
 	begin
-		game.scores[i].value 		:= 0;
-		game.scores[i].difficulty 	:= DifficultyKind(0);
-		game.scores[i].name 		:= '';
+		with game.scores[i] do
+		begin
+			value 		:= 0;
+			difficulty 	:= DifficultyKind(0);
+			name 		:= '';
+		end;
 	end;
 
 	PrintHighScoreList(game);	
@@ -377,9 +401,9 @@ begin
 	ProcessEvents();
 	HidePanel('MenuPanel');
 	SetupPlayer(game.player);
-	game.gameStarted := TRUE;
 	SetupAllCandy(game);
 	SetupAllEnemies(game);
+	game.gameStarted := TRUE;
 end;
 
 procedure SetupGame(var game: GameData);
@@ -464,9 +488,12 @@ var
 begin
 	for i:=0 to High(game.scores) do
 	begin
-		game.scores[i].value:= ReadIntegerF(game.scoreFile);						// Sets the value at i to the matching line in the hsfile
-		game.scores[i].difficulty:= DifficultyKind(ReadIntegerF(game.scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
-		game.scores[i].name := ReadStringF(game.scoreFile); 						// same as first
+		with game, scores[i] do
+		begin
+			value:= ReadIntegerF(scoreFile);						// Sets the value at i to the matching line in the hsfile
+			difficulty:= DifficultyKind(ReadIntegerF(scoreFile));	// Sets the difficulty in the array to the Dkind equivalent
+			name := ReadStringF(scoreFile); 						// same as first
+		end
 	end;
 
 	close(game.scoreFile);
