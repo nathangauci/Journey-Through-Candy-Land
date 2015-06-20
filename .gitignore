@@ -13,6 +13,6 @@ bin/Debug
 bin/Release
 
 # Temp files
-tmp/Debug/
+tmp/
 
 *.docx
