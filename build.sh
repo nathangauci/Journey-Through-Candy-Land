@@ -285,10 +285,10 @@ doMacPackage()
 doZip()
 {   
 	echo "  ... Creating zip file at " ${FULL_APP_PATH}"/${OS}.zip"
-	cd /${FULL_APP_PATH}/${OUT_DIR}
+	cd /${FULL_APP_PATH}/${OUT_DIR} > ${LOG_FILE}
 	if [ "$OS" = "$WIN" ]; then
 		echo "Zipping is not supported on Windows"
-		break
+		exit
 	elif [ "$OS" = "$MAC" ]; then	
 		zip -r ../${OS}.zip ./${GAME_NAME}.app > ${LOG_FILE}
 	else
