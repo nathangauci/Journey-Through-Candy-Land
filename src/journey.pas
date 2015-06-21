@@ -6,6 +6,7 @@
 ///***				100 576 323						***///
 ///****************************************************///
 
+// As of the interview
 program journey;
 // Stops Msys from coming up, NOTE: if any other errors occur then on mac this
 // will be shown as a warning this is because it is not needed but simply ignored
