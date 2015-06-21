@@ -1,4 +1,7 @@
 # Journey-Through-Candy-Land
+
+## The Old branch is as of Thursday, with the addition of the data dictionary
+
 A sidescrolling game made using SwinGame
 
 
