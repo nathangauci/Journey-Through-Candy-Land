@@ -1,0 +1,41 @@
+GameData: Record of
+[
+	player: Record of
+	[
+		bmp: Bitmap, the players bitmap
+		x, y: Single, the location the player is in
+		score: Integer, the current score the player has earnt
+		health: Integer, the amount of health the player has left
+		name: String, the players name
+	] 	
+	candy: array of record of:
+	[
+		bmp: Bitmap, the candies bitmap
+		value: Integer, amount the candy is worth
+		x, y: Single, the location the candy is in
+		dx: the speed the candy moves
+	]		
+	enemies: array of record of:
+	[
+		bmp: Bitmap, the enemies bitmap
+		x, y: Single, the location the enemy is in
+		dx: the speed the enemy moves
+	]		
+	scores: Array of record of:
+	[
+		value: Integer, the score earnt
+
+		difficulty: Enumeration of:
+			(Easy, Hard, Impossible), the options for the games difficulty
+
+		name: String, the username of the player
+	]
+	scoreFile: TextFile
+	difficulty: Enumeration of:
+		(Easy, Hard, Impossible), the options for the games difficulty
+
+	gameStarted: Boolean, whether the game is started
+	head: Bitmap, the header file
+	speed: Integer, the speed the objects in the game move at 		
+	font: Font the game uses (arial)
+]
