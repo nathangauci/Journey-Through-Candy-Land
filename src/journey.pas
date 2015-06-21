@@ -14,13 +14,13 @@ program journey;
 uses
 	SwinGame, sgTypes, sysUtils, typInfo, TextUserInput;
 const
-	NO_OF_CANDY = 50;
-	NO_OF_ENEMIES = 17;
-	GRAVITY_DIVISOR = 5;
-	FALL_BACK_DIVISOR = 1.1;
-	FONT_SIZE = 20;
-	AMT_OF_CHARS = 15;
-	LEEWAY = 100;
+	NO_OF_CANDY			= 50;
+	NO_OF_ENEMIES		= 17;
+	GRAVITY_DIVISOR		= 5;
+	FALL_BACK_DIVISOR	= 1.1;
+	FONT_SIZE			= 20;
+	AMT_OF_CHARS		= 15;
+	LEEWAY				= 100;
 type
 	DifficultyKind = (Easy, Hard, Impossible);
 
@@ -144,6 +144,18 @@ begin
 	end;
 end;
 
+function ZeroTest(t: Integer): Boolean;
+begin
+	if t = 0 then
+	begin
+		result := FALSE;
+	end
+	else
+	begin
+		result := TRUE;
+	end;
+end;
+
 procedure ChangeVariables(var game: GameData);
 { checks what the difficulty is and changes the variables accordingly}
 begin
@@ -152,18 +164,60 @@ begin
 		case difficulty of
 			easy:
 			begin
-				speed:=10;
-				player.health:= 5;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					speed:=10;
+				end;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					player.health:= 5;
+				end;
 			end;
 			hard:
 			begin
-				speed:=20;
-				player.health:= 3;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					speed:=20;
+				end;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					player.health:= 3;
+				end;
 			end;
 			Impossible:
 			begin
-				speed:=25;
-				player.health:= 2;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					speed:=25;
+				end;
+				if ZeroTest(0) then
+				begin
+					//
+				end
+				else
+				begin
+					player.health:= 2;
+				end;
 			end;
 		end;
 	end;	
@@ -211,7 +265,6 @@ begin
 		y		:= ScreenHeight()/2;
 		score	:= 0;	
 	end;
-
 end;
 
 procedure SetupCandy(var candy: CandyData; const game: GameData);
