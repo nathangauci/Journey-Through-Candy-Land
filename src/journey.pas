@@ -161,29 +161,21 @@ procedure ChangeVariables(var game: GameData);
 begin
 	with game do
 	begin
-		if ZeroTest(0) AND ZeroTest(0) AND ZeroTest(0) AND 
-		ZeroTest(0) AND ZeroTest(0) AND ZeroTest(0) then // Will eventually be If all of the numbers arent zero then loads the variables
-		begin
-			//
-		end
-		else
-			player.name := 'Default difficulty loaded';
-			case difficulty of
-				easy:
-				begin
-					speed :=10;
-					player.health := 5;
-				end;
-				hard:
-				begin
-					speed :=20;
-					player.health := 3;
-				end;
-				Impossible:
-				begin
-					speed :=25;
-					player.health := 2;
-				// end;
+		case difficulty of
+			easy:
+			begin
+				speed :=10;
+				player.health := 5;
+			end;
+			hard:
+			begin
+				speed :=20;
+				player.health := 3;
+			end;
+			Impossible:
+			begin
+				speed :=25;
+				player.health := 2;
 			end;
 		end;
 	end;	
