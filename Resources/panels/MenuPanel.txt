@@ -14,16 +14,16 @@ i: background.png
 // Region data
 // Format: r: x, y, w, h, kind
 r: 350, 270, 70, 30, Button, StartButton
-r: 355, 275, 65, 30, Label, StartButtonLabel, Font, c, Start!
+r: 350, 275, 70, 30, Label, StartButtonLabel, Font, c, Start!
 
 r: 420, 270, 123, 30, Button, DifficultyButton
-r: 422, 275, 120, 30, Label, DifficultyButtonLabel, Font, c, Change Difficulty
+r: 420, 275, 123, 30, Label, DifficultyButtonLabel, Font, c, Change Difficulty
 
 r: 700, 500, 100, 70, Button, ClearHSButton
-r: 702, 530, 98, 70, Label, ClearHSLabel, Font, c, Clear Scores
+r: 700, 530, 100, 70, Label, ClearHSLabel, Font, c, Clear Scores
 
 r: 190, 500, 100, 70, Button, AboutButton
-r: 195, 530, 95, 70, Label, AboutButtonLabel, Font, c, About
+r: 190, 530, 100, 70, Label, AboutButtonLabel, Font, c, About
 
 // Lists are loaded as a region with the following format:
 // r: x, y, w, h, List, ListID, Columns, Rows, ActiveItem, fontID, alignment, scrollSize, scrollKind, scrollBmp

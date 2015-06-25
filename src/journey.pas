@@ -164,60 +164,18 @@ begin
 		case difficulty of
 			easy:
 			begin
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					speed:=10;
-				end;
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					player.health:= 5;
-				end;
+				speed :=10;
+				player.health := 5;
 			end;
 			hard:
 			begin
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					speed:=20;
-				end;
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					player.health:= 3;
-				end;
+				speed :=20;
+				player.health := 3;
 			end;
 			Impossible:
 			begin
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					speed:=25;
-				end;
-				if ZeroTest(0) then
-				begin
-					//
-				end
-				else
-				begin
-					player.health:= 2;
-				end;
+				speed :=25;
+				player.health := 2;
 			end;
 		end;
 	end;	
